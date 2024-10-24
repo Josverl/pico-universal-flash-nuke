@@ -13,6 +13,7 @@ pico_sdk_init()
 
 add_executable(flash_nuke
         nuke.c
+        flash.c
         )
 
 target_link_libraries(flash_nuke
@@ -25,4 +26,3 @@ target_link_libraries(flash_nuke
 pico_set_binary_type(flash_nuke no_flash)
 
 pico_add_extra_outputs(flash_nuke)
-

@@ -24,48 +24,36 @@
 #include "pico/stdlib.h"
 #include "hardware/flash.h"
 #include "pico/bootrom.h"
-#include "hardware/watchdog.h"
-
-__attribute__((naked)) void isr_hardfault(void) {
-    watchdog_reboot(0, 0, 0);
-}
 
 int main() {
-    uint n;
+    uint flash_size_bytes;
 
-    if (watchdog_caused_reboot()) {
-        // Leave an eyecatcher pattern in the first page of flash so picotool can
-        // more easily check the size:
-        static const uint8_t eyecatcher[FLASH_PAGE_SIZE] = "NUKE";
-        flash_range_program(0, eyecatcher, FLASH_PAGE_SIZE);
+    uint8_t txbuf[4];
+    uint8_t rxbuf[4];
+    txbuf[0] = 0x9f;
 
-        reset_usb_boot(0, 0);
+    flash_do_cmd(txbuf, rxbuf, 4);
+
+    flash_size_bytes = 1 << rxbuf[3];
+
+    flash_range_erase(0, flash_size_bytes);
+
+    // Leave an eyecatcher pattern in the first page of flash so picotool can
+    // more easily check the size:
+    static const uint8_t eyecatcher[FLASH_PAGE_SIZE] = "NUKE";
+    flash_range_program(0, eyecatcher, FLASH_PAGE_SIZE);
+
+    reset_usb_boot(0, 0);
 
 #ifdef PICO_DEFAULT_LED_PIN
-        // Flash LED for success
-        gpio_init(PICO_DEFAULT_LED_PIN);
-        gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
-        for (int i = 0; i < 3; ++i) {
-            gpio_put(PICO_DEFAULT_LED_PIN, 1);
-            sleep_ms(100);
-            gpio_put(PICO_DEFAULT_LED_PIN, 0);
-            sleep_ms(100);
-        }
+    // Flash LED for success
+    gpio_init(PICO_DEFAULT_LED_PIN);
+    gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
+    for (int i = 0; i < 3; ++i) {
+        gpio_put(PICO_DEFAULT_LED_PIN, 1);
+        sleep_ms(100);
+        gpio_put(PICO_DEFAULT_LED_PIN, 0);
+        sleep_ms(100);
+    }
 #endif
-        return 0;
-    }
-
-    flash_range_erase(0, 2 * 1024 * 1024); // 0 - 2M
-
-    // 2M -> 32M
-    for(n = 2; n < 6; n++) {
-        uint offset = (1 << (n - 1)) * 1024 * 1024;
-        uint count = (1 << n) * 1024 * 1024;
-        count -= offset;
-        flash_range_erase(offset, count);
-    }
-
-    // Pop back up as an MSD drive
-   //reset_usb_boot(0, 0);
-    watchdog_reboot(0, 0, 0);
 }
