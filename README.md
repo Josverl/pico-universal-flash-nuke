@@ -10,6 +10,8 @@ That nightmare is over. My gift to you: Pico Universal Flash Nuke!
 
 (This incredibly delicately combined uf2 was created using the awesome power of `cat`)
 
+Grab Pico Universal Flash Nuke from the releases page: https://github.com/Gadgetoid/pico-universal-flash-nuke/releases/latest
+
 ## Support Me
 
 I work on Pico shinies by day, occasionally cranking out balmy tools to make my job easier and sharing them with the world.
