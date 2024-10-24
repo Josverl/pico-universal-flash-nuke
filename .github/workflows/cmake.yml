@@ -57,6 +57,9 @@ jobs:
       with:
         release: '13.3.Rel1'
 
+    - name: Install CCache
+      run: sudo apt update && sudo apt install ccache
+
     - name: RP2350 - Create Build Environment
       run: cmake -E make_directory ${{runner.workspace}}/build-rp2350
 
