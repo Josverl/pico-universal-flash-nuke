@@ -40,13 +40,13 @@ jobs:
           ccache-cmake
 
     - name: Checkout Code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         path: src
 
     # Checkout the Pico SDK
     - name: Checkout Pico SDK
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: raspberrypi/pico-sdk
         path: pico-sdk
