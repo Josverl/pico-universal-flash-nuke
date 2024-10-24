@@ -63,7 +63,7 @@ jobs:
     - name: RP2350 - Configure CMake
       shell: bash
       working-directory: ${{runner.workspace}}/build-rp2350
-      run: cmake $GITHUB_WORKSPACE/src ${{matrix.cmake-args}} -DPICO_BOARD=PICO2
+      run: cmake $GITHUB_WORKSPACE/src ${{matrix.cmake-args}} -DPICO_BOARD=pico2
 
     - name: RP2350 - Build
       working-directory: ${{runner.workspace}}/build-rp2350
@@ -79,13 +79,13 @@ jobs:
     - name: RP2040 - Configure CMake
       shell: bash
       working-directory: ${{runner.workspace}}/build-rp2040
-      run: cmake $GITHUB_WORKSPACE/src ${{matrix.cmake-args}} -DPICO_BOARD=PICO
+      run: cmake $GITHUB_WORKSPACE/src ${{matrix.cmake-args}} -DPICO_BOARD=pico
 
     - name: RP2040 - Build
       working-directory: ${{runner.workspace}}/build-rp2040
       shell: bash
       run: |
-        ccache --zero-stats || true
+        ccache --zero-stats || truef
         cmake --build . --config $BUILD_TYPE -j 2
         ccache --show-stats || true
 
