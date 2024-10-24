@@ -31,12 +31,19 @@ static void __no_inline_not_in_flash_func(flash_cs_force)(bool high) {
 #endif
 }
 
+static void __no_inline_not_in_flash_func(flash_enable_xip_via_boot2)(void) {
+    // Set up XIP for 03h read on bus access (slow but generic)
+    rom_flash_enter_cmd_xip_fn flash_enter_cmd_xip_func = (rom_flash_enter_cmd_xip_fn)rom_func_lookup_inline(ROM_FUNC_FLASH_ENTER_CMD_XIP);
+    assert(flash_enter_cmd_xip_func);
+    flash_enter_cmd_xip_func();
+}
+
 void __no_inline_not_in_flash_func(flash_do_cmd)(const uint8_t *txbuf, uint8_t *rxbuf, size_t count) {
     rom_connect_internal_flash_fn connect_internal_flash_func = (rom_connect_internal_flash_fn)rom_func_lookup_inline(ROM_FUNC_CONNECT_INTERNAL_FLASH);
     rom_flash_exit_xip_fn flash_exit_xip_func = (rom_flash_exit_xip_fn)rom_func_lookup_inline(ROM_FUNC_FLASH_EXIT_XIP);
     rom_flash_flush_cache_fn flash_flush_cache_func = (rom_flash_flush_cache_fn)rom_func_lookup_inline(ROM_FUNC_FLASH_FLUSH_CACHE);
     assert(connect_internal_flash_func && flash_exit_xip_func && flash_flush_cache_func);
-    //flash_init_boot2_copyout();
+    //flash_init_boot2_copyout(); // Declared as an empty function if PICO_NO_FLASH
     __compiler_memory_barrier();
     connect_internal_flash_func();
     flash_exit_xip_func();
@@ -82,5 +89,5 @@ void __no_inline_not_in_flash_func(flash_do_cmd)(const uint8_t *txbuf, uint8_t *
     flash_cs_force(1);
 
     flash_flush_cache_func();
-    //flash_enable_xip_via_boot2();
+    flash_enable_xip_via_boot2();
 }

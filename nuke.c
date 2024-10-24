@@ -34,7 +34,7 @@ int main() {
 
     flash_do_cmd(txbuf, rxbuf, 4);
 
-    flash_size_bytes = 1 << rxbuf[3];
+    flash_size_bytes = 1u << rxbuf[3];
 
     flash_range_erase(0, flash_size_bytes);
 
@@ -42,8 +42,6 @@ int main() {
     // more easily check the size:
     static const uint8_t eyecatcher[FLASH_PAGE_SIZE] = "NUKE";
     flash_range_program(0, eyecatcher, FLASH_PAGE_SIZE);
-
-    reset_usb_boot(0, 0);
 
 #ifdef PICO_DEFAULT_LED_PIN
     // Flash LED for success
@@ -56,4 +54,6 @@ int main() {
         sleep_ms(100);
     }
 #endif
+
+    reset_usb_boot(0, 0);
 }
