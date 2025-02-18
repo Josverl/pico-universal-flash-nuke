@@ -56,4 +56,6 @@ int main() {
 #endif
 
     reset_usb_boot(0, 0);
+    // write to the magic address that triggers the UF2 bootloader.
+    *(volatile uint32_t *)(XIP_BASE + 0x10) = 0x00000000; 
 }
